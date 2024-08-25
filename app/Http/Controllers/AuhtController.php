@@ -27,7 +27,7 @@ class AuhtController extends Controller
         Auth::login($user);
 
         //redirect
-        return redirect()->route('home');
+        return redirect()->route('dashboard');
     }
 
     //login user
@@ -48,14 +48,18 @@ class AuhtController extends Controller
         }
     }
 
-    public function logout(Request $request){
-
+    public function logout(Request $request)
+    {
+        // Logout the user
         Auth::logout();
 
+        // Invalidate user's session
         $request->session()->invalidate();
 
+        // Regenerate CSRF token
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // Redirect to home
+        return redirect('post');
     }
-}
+}   
