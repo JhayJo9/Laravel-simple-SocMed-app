@@ -2,15 +2,15 @@
 
 <div class="card">
     <div class="flex gap-6">
-        {{-- Cover photo 
         <div class="h-auto w-1/5 rounded-md overflow-hidden self-start">
             @if ($post->image)
-                <img src="{{ asset('storage/' . $post->image) }}" alt="">
-            @elseresources/views/posts/postCard.blade.php
-                <img class="object-cover object-center rounded-md" src="{{ asset('storage/posts_images/default.jpeg') }}" alt="">
+                <img class="shadow-xl dark:shadow-gray-800" src="{{ asset('storage/' . $post->image) }}" alt="Post Image">
+            @else
+                <img class="object-cover object-center rounded-md" src="{{ asset('storage/posts_images/a.png') }}" alt="Default Image">
             @endif
         </div>
-        --}}
+        
+       
         <div class="w-4/5">
             {{-- Title --}}
             <h2 class="font-bold text-xl">{{ $post->title }}</h2>
@@ -45,7 +45,7 @@
     </div>
 
 
-    {{-- Placeholder for extra elements used in user dashboard --}}
+    
     <div>
         {{ $slot }}
     </div>

@@ -60,6 +60,6 @@ class AuhtController extends Controller
         $request->session()->regenerateToken();
 
         // Redirect to home
-        return redirect('post');
+        return redirect('posts');
     }
 }   

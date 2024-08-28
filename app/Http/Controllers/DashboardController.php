@@ -16,10 +16,10 @@ class DashboardController extends Controller
         return view('users.dashboard', ['posts' => $posts]);
     }
 
-    public function userPosts(){
-        //$userPosts = $user->posts()->latest()->paginate(6);
-        dd("dfdff");
-        return view('users.posts');
+    public function userPosts(User $user){
+        $user->posts()->latest()->paginate(6);
+
+        return view('users.posts', ['user' => $user]);
     }
     
 }

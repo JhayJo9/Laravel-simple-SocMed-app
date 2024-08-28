@@ -9,9 +9,16 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-
-class PostController extends Controller
+use Illuminate\Support\Facades\Storage;
+class PostController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('auth', except: ['index','store']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */
@@ -36,12 +43,37 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+
+        
+
+        //dd("fd");
+
         $fields = $request->validate([
             'title' => ['required','max:255'],
-            'body' => ['required']
+            'body' => ['required'],
+            'image' => ['nullable', 'file', 'max:3000', 'mimes:png,jpg,webp']
         ]);
-        
-        Auth::user()->posts()->create($fields);
+        $path = null;
+        if($request->hasFile('image')){
+            $file = $request->file('image');
+
+
+          $path =  Storage::disk('public')->put('posts_images' , $file);
+        // Generate a unique filename with extension
+        //$filename = time() . '-' . $file->getClientOriginalName();
+
+        // Store the file in the 'posts_images' directory within the 'public' disk
+            //$path = $file->move(public_path('\storage\posts_images'), $filename);
+
+        //dd($path);
+        }
+
+
+        Auth::user()->posts()->create([
+            'title' => $request->title,
+            'body' => $request->body,
+            'image' => $path
+        ]);
 
         return back()->with('Success', 'Your post was created');
     }
@@ -52,6 +84,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
         //
+        return view('posts.show', ['post' => $post]);
     }
 
     /**
@@ -60,6 +93,8 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         //
+        Gate::authorize('modify', $post);
+        return view('posts.edit', ['posts' => $post]);
     }
 
     /**
@@ -67,7 +102,15 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        Gate::authorize('modify', $post);
+        $fields = $request->validate([
+            'title' => ['required','max:255'],
+            'body' => ['required']
+        ]);
+        
+        $post->update($fields);
+
+        return redirect()->route('dashboard')->with('Success', 'Your post was created');
     }
 
     /**
@@ -75,8 +118,15 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        Gate::authorize('modify', $post);
         $post->delete();
-        
+
+        // check if image exits
+        if($post->image){
+            Storage::disk('public')->delete($post->image);
+        }
+
+
         return back()->with('delete', 'Your post was deleted');
     }
 }

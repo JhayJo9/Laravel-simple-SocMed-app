@@ -1,23 +1,15 @@
 <x-layout>
+   <h1 class="title">Latest Posts</h1>
 
-   <div class="flex flex-col">
-    @foreach ($posts as $post)
-    <div class="card mt-3">
-         <h3 class="font-bold text-xl">{{ $post->title }}</h3>
+   {{-- List of posts --}}
+   <div class="grid grid-cols-2 gap-6">
+       @foreach ($posts as $post)
+           <x-postCard :post="$post" />
+       @endforeach
+   </div>
 
-         <div class="text-xs font-light mb-4">
-         <span>POSTED {{ $post->created_at->diffForHumans() }} by </span>
-         <a href="" class="text-blue-300">{{ $post->user->username }}</a>
-         </div>
-
-         <div class="text-sm">
-            <p>{{ Str::words($post->body, 15, '...') }}</p>
-         </div>
-    </div>
-     @endforeach
-
-     <div>
-      {{ $posts->links() }}
-      </div>
+   {{-- Pagination links --}}
+   <div>
+       {{ $posts->links() }}
    </div>
 </x-layout>

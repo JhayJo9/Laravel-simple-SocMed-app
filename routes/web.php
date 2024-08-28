@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Post;
 use App\Models\User;
 
-Route::redirect('/', 'post')->name('post');
+Route::redirect('/', 'posts')->name('posts');
 
 Route::resource('posts', PostController::class);
 
